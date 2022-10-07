@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane fx:id="tabMain" prefHeight="403.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.trucker_system.truckersystem.fxControllers.MainPage">
+   <children>
+      <TabPane layoutY="-4.0" prefHeight="200.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="Main">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="141.0" prefWidth="600.0">
+                     <children>
+                        <Text fx:id="welcomeName" layoutX="93.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" wrappingWidth="149.21630859375">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Text>
+                        <Text layoutX="14.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome, ">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="assignedCargosText" layoutX="83.0" layoutY="76.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Assigned trips" />
+                        <Text fx:id="unassignedCargosText" layoutX="419.0" layoutY="76.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Available cargos" />
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+          <Tab fx:id="managerTab" text="Manager">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+      <ListView fx:id="cargosListView" layoutX="14.0" layoutY="141.0" prefHeight="247.0" prefWidth="232.0" />
+      <ListView fx:id="unassignedCargosListView" layoutX="345.0" layoutY="141.0" prefHeight="247.0" prefWidth="232.0" />
+   </children>
+</AnchorPane>
