@@ -56,6 +56,24 @@ public class CargoHib {
         }
     }
 
+    public List<Cargo> getOnlyAssignedCargos() {
+        entityManager = emf.createEntityManager();
+        List<Cargo> cargoList = new ArrayList<>();
+        try {
+            entityManager.getTransaction().begin();
+            String select = "FROM Cargo c WHERE c.trucker IS NOT NULL";
+            Query query = entityManager.createQuery(select);
+            cargoList = query.getResultList();
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (entityManager != null) entityManager.close();
+        }
+
+        return cargoList;
+    }
+
     public List<Cargo> getUnassignedCargos() {
         entityManager = emf.createEntityManager();
         List<Cargo> unassignedCargos = new ArrayList<>();

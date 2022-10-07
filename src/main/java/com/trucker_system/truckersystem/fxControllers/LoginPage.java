@@ -45,13 +45,9 @@ public class LoginPage {
         if (user != null) {
             if (user.getDtype().equals("Trucker")) {
                 List<Cargo> cargoList = new ArrayList<>();
-
                 CargoHib cargoHib = new CargoHib(entityManagerFactory);
-
                 this.trucker = userHib.getTrucker(user);
-
                 cargoList = cargoHib.getCargoListById(this.trucker);
-
                 this.trucker.setCargosList(cargoList);
             }
             else {

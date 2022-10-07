@@ -29,8 +29,8 @@ public abstract class User implements Serializable {
         this.login = login;
         this.password = password;
         this.email = email;
-        this.name = name;
-        this.surname = surname;
+        this.name = name.substring(0, 1).toUpperCase() + name.substring(1);
+        this.surname = surname.substring(0, 1).toUpperCase() + name.substring(1);
     }
 
     @Override

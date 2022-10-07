@@ -29,7 +29,7 @@ public class Cargo {
     private Trucker trucker;
 
     public Cargo(String client, String startDestination, String finalDestination, LocalDate assignedAt, LocalDate deliverUntil, boolean finished, Trucker trucker) {
-        this.client = client;
+        this.client = client.substring(0, 1).toUpperCase() + client.substring(1);
         this.startDestination = startDestination;
         this.finalDestination = finalDestination;
         this.assignedAt = assignedAt;

@@ -7,6 +7,7 @@ import com.trucker_system.truckersystem.model.User;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaQuery;
 import java.util.List;
 
 public class UserHib {
@@ -41,6 +42,33 @@ public class UserHib {
         } finally {
             if (entityManager != null) entityManager.close();
         }
+    }
+
+    public List<Trucker> getAllTruckers() {
+        entityManager = emf.createEntityManager();
+        List<Trucker> truckerList = null;
+        try {
+//            CriteriaQuery<Object> query = entityManager.getCriteriaBuilder().createQuery();
+//            query.select(query.from(Trucker.class));
+//            Query q = entityManager.createQuery(query);
+//            return q.getResultList();
+            entityManager.getTransaction().begin();
+
+            String select = "FROM User u WHERE u.dtype=:trucker";
+            Query query = entityManager.createQuery(select);
+            query.setParameter("trucker", "Trucker");
+            truckerList = query.getResultList();
+            System.out.println(truckerList.get(0));
+
+            entityManager.getTransaction().commit();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (entityManager != null) entityManager.close();
+        }
+
+        return truckerList;
     }
 
     public void getUserData(String login, String password) {
