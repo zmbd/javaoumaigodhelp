@@ -42,6 +42,21 @@ public class CargoHib {
         }
     }
 
+    public void deleteCargo(Cargo cargo) {
+        entityManager = emf.createEntityManager();
+        try {
+            entityManager.getTransaction().begin();
+            Cargo persistentInstance = entityManager.find(Cargo.class, cargo.getId());
+            //Cargo persistentInstance = entityManager.merge(cargo);
+            entityManager.remove(persistentInstance);
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (entityManager != null) entityManager.close();
+        }
+    }
+
     public void updateCargoAssignedTrucker(Cargo cargo, Trucker trucker) {
         entityManager = emf.createEntityManager();
         cargo.setTrucker(trucker);

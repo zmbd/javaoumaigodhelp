@@ -1,9 +1,11 @@
 package com.trucker_system.truckersystem.fxControllers;
 
+import com.trucker_system.truckersystem.hibernate.CargoHib;
 import com.trucker_system.truckersystem.hibernate.UserHib;
 import com.trucker_system.truckersystem.model.Cargo;
 import com.trucker_system.truckersystem.model.Manager;
 import com.trucker_system.truckersystem.model.Trucker;
+import com.trucker_system.truckersystem.utils.ConfirmationDialog;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -12,6 +14,7 @@ import javafx.scene.text.Text;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CargoDetailPage {
     @FXML
@@ -62,6 +65,11 @@ public class CargoDetailPage {
 
     private final EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("TruckerSystem");
     private final UserHib userHib = new UserHib(entityManagerFactory);
+    private final CargoHib cargoHib = new CargoHib(entityManagerFactory);
+
+    public Cargo updateParent() {
+        return this.cargo;
+    }
 
     public void initData(Cargo cargo, Trucker trucker, Manager manager) {
         this.cargo = cargo;
@@ -83,29 +91,68 @@ public class CargoDetailPage {
             cargoEndDate.setValue(this.cargo.getDeliverUntil());
         }
 
-        if (this.trucker == null) {
+        if (this.trucker == null && this.cargo != null) {
+            cargoCreateBtn.setVisible(false);
+
             this.truckerList = userHib.getAllTruckers();
 
+            cargoClientInput.setText(this.cargo.getClient());
+            cargoStartDestInput.setText(this.cargo.getStartDestination());
+            cargoEndDestInput.setText(this.cargo.getFinalDestination());
+
+            Trucker assignedTrucker = this.cargo.getTrucker();
+            AtomicInteger assignedTruckerInd = new AtomicInteger();
+            AtomicInteger lambdaIndex = new AtomicInteger(0);
+
             this.truckerList.forEach(tl -> {
+                if (assignedTrucker != null && tl.getLogin().equals(assignedTrucker.getLogin())) {
+                    assignedTruckerInd.set(lambdaIndex.get());
+                }
+
                 cargoTruckerChoiceBox.getItems().add(tl.getName() + " " + tl.getSurname() + ", " + tl.getEmail());
+                lambdaIndex.getAndIncrement();
             });
 
             //fix automatically selected when manager is selecting item from ListView, as it already has trucker assigned.
-            cargoTruckerChoiceBox.getSelectionModel().select(0);
+            if (assignedTrucker != null) {
+                cargoTruckerChoiceBox.getSelectionModel().select((Integer) assignedTruckerInd.get());
+            }
         } else {
             cargoClientInput.setVisible(false);
             cargoStartDestInput.setVisible(false);
             cargoEndDestInput.setVisible(false);
+            cargoAssignedDate.setDisable(true);
+            cargoAssignedDate.setOpacity(1);
+            cargoEndDate.setDisable(true);
+            cargoEndDate.setOpacity(1);
             cargoTruckerChoiceBox.setVisible(false);
+            cargoCreateBtn.setVisible(false);
+            cargoUpdateBtn.setVisible(false);
+            cargoDeleteBtn.setVisible(false);
 
             cargoTruckerText.setText(this.trucker.getName() + " " + this.trucker.getSurname() + ", " + this.trucker.getEmail());
         }
     }
 
     public void cargoUpdateBtnAction(ActionEvent event) {
+        if (cargoClientInput.getText().length() > 5 && cargoStartDestInput.getText().length() > 10 && cargoEndDestInput.getText().length() > 10 && cargoAssignedDate.getValue() != null && cargoEndDate.getValue() != null && !cargoTruckerChoiceBox.getSelectionModel().isEmpty()) {
+            this.cargo.setClient(cargoClientInput.getText());
+            this.cargo.setStartDestination(cargoStartDestInput.getText());
+            this.cargo.setFinalDestination(cargoEndDestInput.getText());
+            this.cargo.setAssignedAt(cargoAssignedDate.getValue());
+            this.cargo.setDeliverUntil(cargoEndDate.getValue());
+            this.cargo.setTrucker(this.truckerList.get(cargoTruckerChoiceBox.getSelectionModel().getSelectedIndex()));
+            cargoHib.updateCargo(this.cargo);
+        }
     }
 
     public void cargoDeleteBtnAction(ActionEvent event) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        boolean result = ConfirmationDialog.deletionConfirmation(alert.getAlertType(), "", "Are you sure you want to delete cargo?");
+
+        if (result) {
+            cargoHib.deleteCargo(this.cargo);
+        }
     }
 
     public void cargoCreateBtnAction(ActionEvent event) {

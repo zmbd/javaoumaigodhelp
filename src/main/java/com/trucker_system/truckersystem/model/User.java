@@ -19,6 +19,7 @@ public abstract class User implements Serializable {
     private int id;
     @Column(insertable = false, updatable = false)
     private String dtype;
+    @Column(unique = true)
     private String login;
     private String password;
     private String email;

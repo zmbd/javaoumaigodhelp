@@ -8,6 +8,7 @@ import com.trucker_system.truckersystem.model.Manager;
 import com.trucker_system.truckersystem.model.Trucker;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -17,6 +18,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -49,39 +51,61 @@ public class MainPage implements Initializable {
     private final EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("TruckerSystem");
     private final CargoHib cargoHib = new CargoHib(entityManagerFactory);
 
-    public <T> void initData(T value, boolean isManager) {
-        this.isManager = isManager;
+    public List<Cargo> getUnassignedCargos() {
+        return cargoHib.getUnassignedCargos();
+    }
+    public List<Cargo> getAssignedCargos(Trucker trucker) {
+        if (trucker != null) return cargoHib.getCargoListById(trucker);
 
-        unassignedCargos = cargoHib.getUnassignedCargos();
+        return cargoHib.getOnlyAssignedCargos();
+    }
 
-        unassignedCargos.forEach(uc -> {
+    public void updateCargos(List<Cargo> unassignedCargos, List<Cargo> assignedCargos) {
+        this.unassignedCargos = unassignedCargos;
+        this.assignedCargos = assignedCargos;
+    }
+
+    public void updateListView(Trucker trucker, Manager manager) {
+        this.unassignedCargos = cargoHib.getUnassignedCargos();
+
+        this.unassignedCargos.forEach(uc -> {
             unassignedCargosListView.getItems().add(uc.getClient());
         });
 
-        selectListViewItem(unassignedCargosListView, unassignedCargos);
+        selectListViewItem(unassignedCargosListView, this.unassignedCargos);
 
-        if (isManager) {
-            this.manager = (Manager) value;
+        if (manager != null) {
+            this.manager = manager;
             welcomeName.setText(this.manager.getName());
 
-            assignedCargos = cargoHib.getOnlyAssignedCargos();
+            this.assignedCargos = cargoHib.getOnlyAssignedCargos();
 
-            assignedCargos.forEach(c -> {
+            this.assignedCargos.forEach(c -> {
                 cargosListView.getItems().add(c.getClient());
             });
         }
         else {
-            this.trucker = (Trucker) value;
+            this.trucker = trucker;
             welcomeName.setText(this.trucker.getName());
-            assignedCargos = this.trucker.getCargosList();
+            this.assignedCargos = this.trucker.getCargosList();
 
             //refactor this s to generic method as used two times
-            assignedCargos.forEach(c -> {
+            this.assignedCargos.forEach(c -> {
                 cargosListView.getItems().add(c.getClient());
             });
         }
 
-        selectListViewItem(cargosListView, assignedCargos);
+        selectListViewItem(cargosListView, this.assignedCargos);
+    }
+
+
+    public <T> void initData(T value, boolean isManager) {
+        this.isManager = isManager;
+
+        if (isManager) this.manager = (Manager) value;
+        else this.trucker = (Trucker) value;
+
+        updateListView(this.trucker, this.manager);
     }
 
     @Override
@@ -95,6 +119,7 @@ public class MainPage implements Initializable {
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
                 //ERROR ERROR SELECTING SAME ITEM WILL NOT TRIGGER THE EVENT ERROR ERROR FIX LATER MMMMMMMM
                 try {
+                    System.out.println(listView.getSelectionModel().getSelectedIndex() + "\t INDEXAS");
                     openCargoDetailWindow(cargo.get(listView.getSelectionModel().getSelectedIndex()), trucker, manager);
                     listView.getSelectionModel().clearSelection();
                 } catch (IOException e) {
@@ -113,8 +138,21 @@ public class MainPage implements Initializable {
         CargoDetailPage cargoDetailPage = fxmlLoader.getController();
         cargoDetailPage.initData(cargoItem, trucker, manager);
 
+        stage.setOnHidden(new EventHandler<WindowEvent>() {
+            public void handle(WindowEvent windowEvent) {
+                updateCargos(unassignedCargos, getUnassignedCargos());
+                updateCargos(assignedCargos, getAssignedCargos(trucker));
+                cargosListView.getItems().clear();
+                unassignedCargosListView.getItems().clear();
+                updateListView(trucker, manager);
+                stage.close();
+            }
+        });
+
         stage.setScene(scene);
-        stage.show();
+        stage.showAndWait();
+
+
     }
 
 
