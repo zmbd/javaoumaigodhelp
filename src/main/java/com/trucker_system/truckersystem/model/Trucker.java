@@ -19,13 +19,13 @@ public class Trucker extends User implements Serializable {
     @OneToMany(mappedBy = "trucker", cascade = CascadeType.ALL)
     private List<Cargo> cargosList;
 
-    public Trucker(String login, String password, String email, String name, String surname, int finishedTrips) {
-        super(login, password, email, name, surname);
+    public Trucker(String login, String password, String email, String name, String surname, String phoneNumber, int finishedTrips) {
+        super(login, password, email, name, surname, phoneNumber);
         this.finishedTrips = finishedTrips;
     }
 
-    public Trucker(int id, String dtype, String login, String password, String email, String name, String surname, int finishedTrips, List<Cargo> cargosList) {
-        super(id, dtype, login, password, email, name, surname);
+    public Trucker(int id, String dtype, String login, String password, String email, String name, String surname, String phoneNumber, int finishedTrips, List<Cargo> cargosList) {
+        super(id, dtype, login, password, email, name, surname, phoneNumber);
         this.finishedTrips = finishedTrips;
         this.cargosList = cargosList;
     }

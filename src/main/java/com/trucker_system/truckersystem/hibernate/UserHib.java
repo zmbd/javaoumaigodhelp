@@ -33,6 +33,7 @@ public class UserHib {
     }
 
     public void updateUser(User user) {
+        entityManager = emf.createEntityManager();
         try {
             entityManager.getTransaction().begin();
             entityManager.merge(user);
@@ -42,6 +43,28 @@ public class UserHib {
         } finally {
             if (entityManager != null) entityManager.close();
         }
+    }
+
+    public List<Manager> getAllManagers() {
+        entityManager = emf.createEntityManager();
+        List<Manager> managerList = null;
+        try {
+            entityManager.getTransaction().begin();
+
+            String select = "FROM User u WHERE u.dtype=:manager";
+            Query query = entityManager.createQuery(select);
+            query.setParameter("manager", "Manager");
+            managerList = query.getResultList();
+
+            entityManager.getTransaction().commit();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (entityManager != null) entityManager.close();
+        }
+
+        return managerList;
     }
 
     public List<Trucker> getAllTruckers() {
@@ -58,7 +81,6 @@ public class UserHib {
             Query query = entityManager.createQuery(select);
             query.setParameter("trucker", "Trucker");
             truckerList = query.getResultList();
-            System.out.println(truckerList.get(0));
 
             entityManager.getTransaction().commit();
 

@@ -8,7 +8,8 @@ module com.trucker_system.truckersystem {
     requires org.hibernate.orm.core;
 
 
-    opens com.trucker_system.truckersystem.fxControllers to javafx.fxml;
+    opens com.trucker_system.truckersystem.fxControllers to javafx.base, javafx.fxml;
+
     exports com.trucker_system.truckersystem;
 
     exports com.trucker_system.truckersystem.model to org.hibernate.orm.core;

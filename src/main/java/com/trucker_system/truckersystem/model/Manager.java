@@ -19,8 +19,7 @@ public class Manager extends User implements Serializable {
     private boolean isAdmin;
 
     public Manager(String login, String password, String email, String name, String surname, String phoneNumber, boolean isAdmin) {
-        super(login, password, email, name, surname);
-        this.phoneNumber = phoneNumber;
+        super(login, password, email, name, surname, phoneNumber);
         this.isAdmin = isAdmin;
     }
 
