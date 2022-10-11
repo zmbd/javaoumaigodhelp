@@ -72,8 +72,6 @@ public class MainPage implements Initializable {
             unassignedCargosListView.getItems().add(uc.getClient());
         });
 
-        selectListViewItem(unassignedCargosListView, this.unassignedCargos);
-
         if (manager != null) {
             this.manager = manager;
             welcomeName.setText(this.manager.getName());
@@ -95,7 +93,8 @@ public class MainPage implements Initializable {
             });
         }
 
-        selectListViewItem(cargosListView, this.assignedCargos);
+        selectListViewItem(cargosListView, this.assignedCargos, null);
+        selectListViewItem(unassignedCargosListView, this.unassignedCargos, cargosListView);
     }
 
 
@@ -113,44 +112,43 @@ public class MainPage implements Initializable {
 
     }
 
-    public void selectListViewItem(ListView<String> listView, List<Cargo> cargo) {
+    public void selectListViewItem(ListView<String> listView, List<Cargo> cargo, ListView<String> listViewSecondary) {
         listView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
                 //ERROR ERROR SELECTING SAME ITEM WILL NOT TRIGGER THE EVENT ERROR ERROR FIX LATER MMMMMMMM
                 try {
                     System.out.println(listView.getSelectionModel().getSelectedIndex() + "\t INDEXAS");
-                    openCargoDetailWindow(cargo.get(listView.getSelectionModel().getSelectedIndex()), trucker, manager);
-                    listView.getSelectionModel().clearSelection();
+                    openCargoDetailWindow(cargo.get(listView.getSelectionModel().getSelectedIndex()), trucker, manager, listView, listViewSecondary);
+                    //listView.getSelectionModel().clearSelection();
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    e.printStackTrace();
                 }
             }
         });
     }
 
-    public void openCargoDetailWindow(Cargo cargoItem, Trucker trucker, Manager manager) throws IOException {
+    public void openCargoDetailWindow(Cargo cargoItem, Trucker trucker, Manager manager, ListView<String> listView, ListView<String> listViewSecondary) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("cargodetails-page.fxml"));
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
         Scene scene = new Scene(fxmlLoader.load());
 
         CargoDetailPage cargoDetailPage = fxmlLoader.getController();
-        cargoDetailPage.initData(cargoItem, trucker, manager);
+        cargoDetailPage.initData(cargoItem, trucker, manager, listView, listViewSecondary);
 
-        stage.setOnHidden(new EventHandler<WindowEvent>() {
-            public void handle(WindowEvent windowEvent) {
-                updateCargos(unassignedCargos, getUnassignedCargos());
-                updateCargos(assignedCargos, getAssignedCargos(trucker));
-                cargosListView.getItems().clear();
-                unassignedCargosListView.getItems().clear();
-                updateListView(trucker, manager);
-                stage.close();
-            }
-        });
+//        stage.setOnHidden(new EventHandler<WindowEvent>() {
+//            public void handle(WindowEvent windowEvent) {
+//                updateCargos(unassignedCargos, getUnassignedCargos());
+//                updateCargos(assignedCargos, getAssignedCargos(trucker));
+//                cargosListView.getItems().clear();
+//                unassignedCargosListView.getItems().clear();
+//                updateListView(trucker, manager);
+//            }
+//        });
 
         stage.setScene(scene);
-        stage.showAndWait();
+        stage.show();
 
 
     }

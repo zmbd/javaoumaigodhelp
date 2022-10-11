@@ -19,15 +19,13 @@ public class TestHibernate {
         UserHib userHib = new UserHib(entityManagerFactory);
         CargoHib cargoHib = new CargoHib(entityManagerFactory);
 
-        List<Trucker> truckerList = userHib.getAllTruckers();
-        truckerList.size();
+        //List<Trucker> truckerList = userHib.getAllTruckers();
 
 //        Manager manager = new Manager("login", "password", "email", "im da manager", "surname", "phonenumber", true);
-//        Trucker trucker = new Trucker("trucker", "trucker123", "truckeris", "im da trucker", "truckeris", 19);
-//        //Cargo cargo = new Cargo("UAB Mesa3", "Vilnius", "Paris, Bordeaux, cargo destination address", userHib.getTrucker(trucker));
+        //Trucker trucker = new Trucker("trucker", "trucker123", "truckeris", "im da trucker", "truckeris", 19);
        // Trucker trucker1 = new Trucker("trucker2", "trucker123", "truckeris", "im da second trucker", "truckeris", 7);
-//        Cargo cargo = new Cargo("UAB Dazai", "Riga, ssss st. 2929", "Spain, Madrid, 2020299", LocalDate.of(2022, Month.OCTOBER, 7), LocalDate.of(2022, Month.OCTOBER, 29), false);
-//        cargoHib.createCargo(cargo);
+        Cargo cargo = new Cargo("UAB Dazai", "Riga, ssss st. 2929", "Spain, Madrid, 2020299", LocalDate.of(2022, Month.OCTOBER, 7), LocalDate.of(2022, Month.OCTOBER, 29), false);
+        cargoHib.createCargo(cargo);
 //
 //
        // cargoHib.updateCargoAssignedTrucker(cargoHib.getCargoById(1), userHib.getTrucker(trucker));

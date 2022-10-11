@@ -10,13 +10,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class CargoDetailPage {
+public class CargoDetailPage extends Stage {
     @FXML
     public Label cargoDetailsLabel;
     @FXML
@@ -62,6 +63,10 @@ public class CargoDetailPage {
     private Trucker trucker = null;
     private List<Trucker> truckerList = null;
     private Manager manager = null;
+    private ListView<String> listView;
+    private ListView<String> listViewSecondary;
+
+    private Stage stage = null;
 
     private final EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("TruckerSystem");
     private final UserHib userHib = new UserHib(entityManagerFactory);
@@ -71,10 +76,12 @@ public class CargoDetailPage {
         return this.cargo;
     }
 
-    public void initData(Cargo cargo, Trucker trucker, Manager manager) {
+    public void initData(Cargo cargo, Trucker trucker, Manager manager, ListView<String> listView, ListView<String> listViewSecondary) {
         this.cargo = cargo;
         this.trucker = trucker;
         this.manager = manager;
+        this.listView = listView;
+        this.listViewSecondary = listViewSecondary;
 
         clientLabel.setText("Client:");
         cargoStartDestLabel.setText("Pickup address:");
@@ -134,6 +141,23 @@ public class CargoDetailPage {
         }
     }
 
+    public void updateListView(ListView<String> listView, ListView<String> listViewSecondary) {
+        var selectedIndex = listView.getSelectionModel().getSelectedIndex();
+        if(this.cargo != null) {
+            listView.getSelectionModel().clearSelection();
+            listView.getItems().set(selectedIndex, this.cargo.getClient());
+            if (listViewSecondary != null && this.cargo.getTrucker() != null) {
+                listViewSecondary.getItems().add(this.cargo.getClient());
+                listView.getItems().remove(selectedIndex);
+            }
+        }
+        else {
+            listView.getSelectionModel().clearSelection();
+            listView.getItems().remove(selectedIndex);
+        }
+
+    }
+
     public void cargoUpdateBtnAction(ActionEvent event) {
         if (cargoClientInput.getText().length() > 5 && cargoStartDestInput.getText().length() > 10 && cargoEndDestInput.getText().length() > 10 && cargoAssignedDate.getValue() != null && cargoEndDate.getValue() != null && !cargoTruckerChoiceBox.getSelectionModel().isEmpty()) {
             this.cargo.setClient(cargoClientInput.getText());
@@ -142,7 +166,14 @@ public class CargoDetailPage {
             this.cargo.setAssignedAt(cargoAssignedDate.getValue());
             this.cargo.setDeliverUntil(cargoEndDate.getValue());
             this.cargo.setTrucker(this.truckerList.get(cargoTruckerChoiceBox.getSelectionModel().getSelectedIndex()));
+
+            updateListView(this.listView, this.listViewSecondary);
+
+            this.stage = (Stage) cargoUpdateBtn.getScene().getWindow();
+            this.stage.close();
+
             cargoHib.updateCargo(this.cargo);
+
         }
     }
 
@@ -152,6 +183,12 @@ public class CargoDetailPage {
 
         if (result) {
             cargoHib.deleteCargo(this.cargo);
+            this.cargo = null;
+
+            updateListView(this.listView, this.listViewSecondary);
+
+            this.stage = (Stage) cargoDeleteBtn.getScene().getWindow();
+            this.stage.close();
         }
     }
 
