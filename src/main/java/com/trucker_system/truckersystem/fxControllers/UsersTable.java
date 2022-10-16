@@ -30,7 +30,6 @@ public class UsersTable {
         this.email = new SimpleStringProperty(email);
         this.phoneNumber = new SimpleStringProperty(phoneNumber);
         this.isAdmin = new SimpleBooleanProperty(isAdmin);
-        this.deleteBtn = new Button("DELETE");
     }
 
     public Button getDeleteBtn() {

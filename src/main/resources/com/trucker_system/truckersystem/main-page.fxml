@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
 <AnchorPane fx:id="tabMain" prefHeight="403.0" prefWidth="599.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.trucker_system.truckersystem.fxControllers.MainPage">
    <children>
-      <TabPane prefHeight="403.0" prefWidth="699.0" tabClosingPolicy="UNAVAILABLE">
+      <TabPane fx:id="tabPane" prefHeight="403.0" prefWidth="699.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
           <Tab text="Main">
             <content>
@@ -36,14 +39,115 @@
               </AnchorPane>
             </content>
           </Tab>
-          <Tab text="Trips">
+          <Tab fx:id="truckerTripsTab" text="Trips">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <AnchorPane fx:id="truckerAnchorPane" prefHeight="345.0" prefWidth="699.0">
+                           <children>
+                              <AnchorPane fx:id="truckerAnchorPaneTrips" layoutX="369.0" layoutY="97.0" prefHeight="245.0" prefWidth="324.0">
+                                 <children>
+                                    <Label layoutX="-1.0" layoutY="16.0" prefHeight="18.0" prefWidth="80.0" text="Client:" />
+                                    <Label layoutX="39.0" layoutY="41.0" prefWidth="80.0" text="Assigned at" />
+                                    <Label layoutX="170.0" layoutY="41.0" prefWidth="80.0" text="Deliver until" />
+                                    <Label layoutY="86.0" prefHeight="18.0" prefWidth="87.0" text="Pickup addr.:" />
+                                    <Label layoutY="114.0" prefHeight="18.0" prefWidth="87.0" text="Delivery addr.:" />
+                                    <Label layoutX="12.0" layoutY="139.0" prefHeight="18.0" prefWidth="46.0" text="Cargo:" />
+                                    <Text fx:id="tripStatusText" layoutX="69.0" layoutY="214.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" textAlignment="CENTER" wrappingWidth="202.9830722808838">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                    </Text>
+                                    <Text fx:id="cargoDetailsText" layoutX="58.0" layoutY="153.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" wrappingWidth="267.9830722808838" />
+                                    <Text fx:id="deliveryAddressText" layoutX="94.0" layoutY="127.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" wrappingWidth="232.9830722808838" />
+                                    <Text fx:id="pickupAddressText" layoutX="79.0" layoutY="100.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" wrappingWidth="232.9830722808838" />
+                                    <Text fx:id="assignedAtText" layoutX="66.0" layoutY="71.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+                                    <Text fx:id="clientText" layoutX="45.0" layoutY="29.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+                                    <Text fx:id="deliveryUntilText" layoutX="197.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </AnchorPane>
+                        <ChoiceBox fx:id="trucksChoiceBox" layoutX="16.0" layoutY="70.0" prefHeight="27.0" prefWidth="317.0" />
+                        <Label fx:id="myTruckLabel" alignment="CENTER" layoutX="17.0" layoutY="30.0" prefHeight="23.0" prefWidth="315.0" text="My Truck">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label alignment="CENTER" layoutX="348.0" layoutY="30.0" prefHeight="18.0" prefWidth="353.0" text="My all trips">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <ChoiceBox fx:id="truckersTripsChoiceBox" layoutX="366.0" layoutY="70.0" prefHeight="27.0" prefWidth="317.0" />
+                        <AnchorPane fx:id="truckerAnchorPaneTruck" layoutX="17.0" layoutY="109.0" prefHeight="240.0" prefWidth="317.0">
+                           <children>
+                              <Label alignment="CENTER_RIGHT" layoutX="6.0" layoutY="24.0" prefHeight="18.0" prefWidth="60.0" text="Brand:" />
+                              <Label alignment="CENTER_RIGHT" layoutX="6.0" layoutY="53.0" prefHeight="18.0" prefWidth="60.0" text="Model:" />
+                              <Label alignment="CENTER_RIGHT" layoutX="6.0" layoutY="78.0" prefWidth="60.0" text="HP:" />
+                              <Label alignment="CENTER_RIGHT" layoutX="6.0" layoutY="104.0" prefWidth="60.0" text="Engine:" />
+                              <Label alignment="CENTER_RIGHT" layoutX="6.0" layoutY="128.0" prefWidth="60.0" text="Release:" />
+                              <Text fx:id="brandText" layoutX="74.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" textAlignment="CENTER" wrappingWidth="216.9830722808838" />
+                              <Text fx:id="modelText" layoutX="74.0" layoutY="66.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" textAlignment="CENTER" wrappingWidth="216.9830722808838" />
+                              <Text fx:id="hpText" layoutX="74.0" layoutY="91.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" textAlignment="CENTER" wrappingWidth="216.9830722808838" />
+                              <Text fx:id="engineText" layoutX="74.0" layoutY="117.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" textAlignment="CENTER" wrappingWidth="216.9830722808838" />
+                              <Text fx:id="releaseText" layoutX="74.0" layoutY="141.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" textAlignment="CENTER" wrappingWidth="216.9830722808838" />
+                              <Button fx:id="saveTruckBtn" layoutX="94.0" layoutY="197.0" mnemonicParsing="false" onAction="#onSaveTruck" prefHeight="36.0" prefWidth="130.0" text="SAVE TRUCK" />
+                           </children>
+                        </AnchorPane>
+                     </children></AnchorPane>
             </content>
           </Tab>
+            <Tab fx:id="managerTrucksTab" text="Trucks">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TableView fx:id="trucksTableView" prefHeight="345.0" prefWidth="516.0">
+                          <columns>
+                            <TableColumn fx:id="trucksColumnId" prefWidth="47.0" text="ID" />
+                            <TableColumn fx:id="trucksColumnBrand" prefWidth="103.0" text="Brand" />
+                              <TableColumn fx:id="trucksColumnModel" prefWidth="91.0" text="Model" />
+                              <TableColumn fx:id="trucksColumnHp" prefWidth="59.0" text="HP" />
+                              <TableColumn fx:id="trucksColumnEngine" prefWidth="69.0" text="Engine" />
+                              <TableColumn fx:id="trucksColumnReleased" prefWidth="82.0" text="Released" />
+                              <TableColumn fx:id="trucksColumnDelete" prefWidth="64.0" />
+                          </columns>
+                        </TableView>
+                        <Button fx:id="addTruckBtn" layoutX="556.0" layoutY="153.0" mnemonicParsing="false" onAction="#onAddTruck" prefHeight="39.0" prefWidth="108.0" text="ADD TRUCK" />
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
+            <Tab fx:id="managerCargoTab" text="Cargo">
+              <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                      <children>
+                          <TableView fx:id="cargoTableView" prefHeight="300.0" prefWidth="699.0">
+                              <columns>
+                                  <TableColumn fx:id="cargoColumnId" prefWidth="36.0" text="ID" />
+                                  <TableColumn fx:id="cargoColumnClient" prefWidth="92.0" text="Client" />
+                                  <TableColumn fx:id="cargoColumnCargo" prefWidth="104.0" text="Cargo" />
+                                  <TableColumn fx:id="cargoColumnPickup" prefWidth="118.0" text="Pickup address" />
+                                  <TableColumn fx:id="cargoColumnDelivery" minWidth="4.0" prefWidth="123.0" text="Delivery address" />
+                                  <TableColumn fx:id="cargoColumnDeadline" prefWidth="81.0" text="Deadline" />
+                                  <TableColumn fx:id="cargoColumnFinished" prefWidth="58.0" text="Finished" />
+                                  <TableColumn fx:id="cargoColumnDelete" prefWidth="86.0" />
+                              </columns>
+                          </TableView>
+                          <Button fx:id="addCargoBtn" layoutX="296.0" layoutY="305.0" mnemonicParsing="false" onAction="#onAddCargo" prefHeight="39.0" prefWidth="108.0" text="ADD CARGO" />
+                      </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
             <Tab text="Forum">
               <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <ListView fx:id="forumListView" layoutX="14.0" layoutY="60.0" prefHeight="226.0" prefWidth="215.0" />
+                        <Label layoutX="95.0" layoutY="24.0" text="Forum" />
+                        <TreeView fx:id="forumTreeView" layoutX="243.0" layoutY="64.0" prefHeight="271.0" prefWidth="449.0" />
+                        <Label layoutX="428.0" layoutY="24.0" text="Forum thread" />
+                     </children></AnchorPane>
               </content>
             </Tab>
             <Tab fx:id="managementTab" text="User Management">

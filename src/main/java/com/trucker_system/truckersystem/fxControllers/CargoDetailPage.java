@@ -5,7 +5,7 @@ import com.trucker_system.truckersystem.hibernate.UserHib;
 import com.trucker_system.truckersystem.model.Cargo;
 import com.trucker_system.truckersystem.model.Manager;
 import com.trucker_system.truckersystem.model.Trucker;
-import com.trucker_system.truckersystem.utils.ConfirmationDialog;
+import com.trucker_system.truckersystem.utils.AlertDialog;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -179,7 +179,7 @@ public class CargoDetailPage extends Stage {
 
     public void cargoDeleteBtnAction(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        boolean result = ConfirmationDialog.deletionConfirmation(alert.getAlertType(), "", "Are you sure you want to delete cargo?");
+        boolean result = AlertDialog.deletionConfirmation(alert.getAlertType(), "", "Are you sure you want to delete cargo?");
 
         if (result) {
             cargoHib.deleteCargo(this.cargo);

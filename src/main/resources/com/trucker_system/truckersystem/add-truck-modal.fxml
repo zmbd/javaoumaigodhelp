@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane prefHeight="320.0" prefWidth="385.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.trucker_system.truckersystem.fxControllers.AddTruckModal">
+   <children>
+      <Label alignment="CENTER" contentDisplay="TOP" layoutX="39.0" layoutY="24.0" prefHeight="17.0" prefWidth="308.0" text="Add Truck" textAlignment="CENTER">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <Label alignment="CENTER_RIGHT" layoutX="6.0" layoutY="80.0" prefHeight="17.0" prefWidth="85.0" text="Brand:" />
+      <Label alignment="CENTER_RIGHT" layoutX="6.0" layoutY="110.0" prefHeight="17.0" prefWidth="85.0" text="Model:" />
+      <Label alignment="CENTER_RIGHT" layoutX="6.0" layoutY="140.0" prefHeight="17.0" prefWidth="85.0" text="HP:" />
+      <Label alignment="CENTER_RIGHT" layoutX="-1.0" layoutY="170.0" prefHeight="17.0" prefWidth="92.0" text="L/100KM:" />
+      <Label alignment="CENTER_RIGHT" layoutX="6.0" layoutY="200.0" prefHeight="17.0" prefWidth="85.0" text="Release year:" textAlignment="CENTER" />
+      <TextField fx:id="addBrandField" layoutX="101.0" layoutY="76.0" prefHeight="26.0" prefWidth="194.0" promptText="MAN" />
+      <TextField fx:id="addModelField" layoutX="101.0" layoutY="106.0" prefHeight="26.0" prefWidth="194.0" promptText="TGX" />
+      <TextField fx:id="addHpfield" layoutX="101.0" layoutY="136.0" prefHeight="26.0" prefWidth="194.0" promptText="200" />
+      <TextField fx:id="addEngineField" layoutX="101.0" layoutY="166.0" prefHeight="26.0" prefWidth="194.0" promptText="10.5" />
+      <TextField fx:id="addReleaseField" layoutX="101.0" layoutY="196.0" prefHeight="26.0" prefWidth="194.0" promptText="2022" />
+      <Button fx:id="addBtn" layoutX="137.0" layoutY="254.0" mnemonicParsing="false" onAction="#onTruckAdd" prefHeight="35.0" prefWidth="112.0" style="-fx-background-color: #24a0ed#24a0ed;" text="ADD" textFill="WHITE" />
+   </children>
+</AnchorPane>

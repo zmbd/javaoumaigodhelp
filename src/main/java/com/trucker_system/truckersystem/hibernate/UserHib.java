@@ -1,5 +1,6 @@
 package com.trucker_system.truckersystem.hibernate;
 
+import com.trucker_system.truckersystem.model.Cargo;
 import com.trucker_system.truckersystem.model.Manager;
 import com.trucker_system.truckersystem.model.Trucker;
 import com.trucker_system.truckersystem.model.User;
@@ -45,6 +46,21 @@ public class UserHib {
         }
     }
 
+    public void deleteUser(int id) {
+        entityManager = emf.createEntityManager();
+        try {
+            entityManager.getTransaction().begin();
+            User persistentInstance = entityManager.find(User.class, id);
+            //Cargo persistentInstance = entityManager.merge(cargo);
+            entityManager.remove(persistentInstance);
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (entityManager != null) entityManager.close();
+        }
+    }
+
     public List<Manager> getAllManagers() {
         entityManager = emf.createEntityManager();
         List<Manager> managerList = null;
@@ -65,6 +81,23 @@ public class UserHib {
         }
 
         return managerList;
+    }
+
+    public List<User> getAllUsersByLogin() {
+        entityManager = emf.createEntityManager();
+        List<User> users = null;
+        try {
+            entityManager.getTransaction().begin();
+            String select = "FROM User u";
+            Query query = entityManager.createQuery(select);
+            users = query.getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (entityManager != null) entityManager.close();
+        }
+
+        return users;
     }
 
     public List<Trucker> getAllTruckers() {

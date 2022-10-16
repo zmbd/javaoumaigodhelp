@@ -15,7 +15,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Entity
 public class Manager extends User implements Serializable {
-    private String phoneNumber;
     private boolean isAdmin;
 
     public Manager(String login, String password, String email, String name, String surname, String phoneNumber, boolean isAdmin) {

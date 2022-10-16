@@ -146,4 +146,35 @@ public class CargoHib {
         }
         return cargoList;
     }
+
+    public void deleteCargoById(int id) {
+        entityManager = emf.createEntityManager();
+        try {
+            entityManager.getTransaction().begin();
+            Cargo persistentInstance = entityManager.find(Cargo.class, id);
+            entityManager.remove(persistentInstance);
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (entityManager != null) entityManager.close();
+        }
+    }
+
+    public List<Cargo> getAllCargos() {
+        entityManager = emf.createEntityManager();
+        List<Cargo> cargoList = new ArrayList<>();
+        try {
+            entityManager.getTransaction().begin();
+            String select = "FROM Cargo";
+            Query query = entityManager.createQuery(select);
+            cargoList = query.getResultList();
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (entityManager != null) entityManager.close();
+        }
+        return cargoList;
+    }
 }

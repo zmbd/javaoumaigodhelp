@@ -24,9 +24,20 @@ public class Cargo {
     private String finalDestination;
     private LocalDate assignedAt;
     private LocalDate deliverUntil;
+    private String cargo;
     private boolean finished;
     @ManyToOne
     private Trucker trucker;
+
+    public Cargo(String client, String startDestination, String finalDestination, LocalDate assignedAt, LocalDate deliverUntil, String cargo, boolean finished) {
+        this.client = client;
+        this.startDestination = startDestination;
+        this.finalDestination = finalDestination;
+        this.assignedAt = assignedAt;
+        this.deliverUntil = deliverUntil;
+        this.cargo = cargo;
+        this.finished = finished;
+    }
 
     public Cargo(String client, String startDestination, String finalDestination, LocalDate assignedAt, LocalDate deliverUntil, boolean finished, Trucker trucker) {
         this.client = client.substring(0, 1).toUpperCase() + client.substring(1);

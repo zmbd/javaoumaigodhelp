@@ -5,7 +5,7 @@ import javafx.scene.control.ButtonType;
 
 import java.util.Optional;
 
-public class ConfirmationDialog {
+public class AlertDialog {
     public static boolean deletionConfirmation(Alert.AlertType alertType, String header, String contentText){
         Alert alert = new Alert(alertType);
         alert.setTitle("TruckerSystem");
@@ -17,5 +17,12 @@ public class ConfirmationDialog {
         }
 
         return false;
+    }
+
+    public static void permissionsDialog(Alert alert) {
+        alert.setTitle("TruckerSystem");
+        alert.setHeaderText("ERROR!");
+        alert.setContentText("You do not have permissions to perform this action.");
+        alert.showAndWait();
     }
 }
