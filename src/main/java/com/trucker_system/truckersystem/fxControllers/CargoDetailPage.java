@@ -144,8 +144,9 @@ public class CargoDetailPage extends Stage {
     public void updateListView(ListView<String> listView, ListView<String> listViewSecondary) {
         var selectedIndex = listView.getSelectionModel().getSelectedIndex();
         if(this.cargo != null) {
-            listView.getSelectionModel().clearSelection();
-            listView.getItems().set(selectedIndex, this.cargo.getClient());
+            //listView.getSelectionModel().clearSelection();
+//            listView.getItems().set(selectedIndex, this.cargo.getClient());
+            listView.getItems().add(this.cargo.getClient());
             if (listViewSecondary != null && this.cargo.getTrucker() != null) {
                 listViewSecondary.getItems().add(this.cargo.getClient());
                 listView.getItems().remove(selectedIndex);
@@ -167,12 +168,12 @@ public class CargoDetailPage extends Stage {
             this.cargo.setDeliverUntil(cargoEndDate.getValue());
             this.cargo.setTrucker(this.truckerList.get(cargoTruckerChoiceBox.getSelectionModel().getSelectedIndex()));
 
-            updateListView(this.listView, this.listViewSecondary);
-
             this.stage = (Stage) cargoUpdateBtn.getScene().getWindow();
             this.stage.close();
 
             cargoHib.updateCargo(this.cargo);
+
+            updateListView(this.listView, this.listViewSecondary);
 
         }
     }

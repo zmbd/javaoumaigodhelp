@@ -27,6 +27,16 @@ public abstract class User implements Serializable {
     private String surname;
     private String phoneNumber;
 
+    public User(String dtype, String login, String password, String email, String name, String surname, String phoneNumber) {
+        this.dtype = dtype;
+        this.login = login;
+        this.password = password;
+        this.email = email;
+        this.name = name.substring(0, 1).toUpperCase() + name.substring(1);
+        this.surname = surname.substring(0, 1).toUpperCase() + name.substring(1);
+        this.phoneNumber = phoneNumber;
+    }
+
     public User(String login, String password, String email, String name, String surname, String phoneNumber) {
         this.login = login;
         this.password = password;

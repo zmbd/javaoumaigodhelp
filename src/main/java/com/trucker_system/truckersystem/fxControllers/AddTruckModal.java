@@ -4,14 +4,18 @@ import com.trucker_system.truckersystem.hibernate.TruckHib;
 import com.trucker_system.truckersystem.model.Truck;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.net.URL;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
-public class AddTruckModal {
+public class AddTruckModal implements Initializable {
     @FXML
     public TextField addBrandField;
     @FXML
@@ -24,6 +28,8 @@ public class AddTruckModal {
     public TextField addReleaseField;
     @FXML
     public Button addBtn;
+    @FXML
+    public Label labelValidate;
 
 
     private Consumer<Truck> truckConsumer = null;
@@ -47,6 +53,11 @@ public class AddTruckModal {
 
             Stage stage = (Stage) addBtn.getScene().getWindow();
             stage.close();
-        }
+        } else labelValidate.setText("Some details are invalid.");
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        labelValidate.setText("");
     }
 }

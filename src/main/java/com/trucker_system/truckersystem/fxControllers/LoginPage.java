@@ -10,9 +10,12 @@ import com.trucker_system.truckersystem.model.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -20,18 +23,22 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.ResourceBundle;
 
-public class LoginPage {
+public class LoginPage implements Initializable {
     private Parent root;
     private Stage stage;
     private Scene scene;
     @FXML
     public TextField loginField;
     @FXML
-    public TextField pwField;
+    public PasswordField pwField;
+    @FXML
+    public Label loginLabel;
 
     private Trucker trucker = null;
     private Manager manager = null;
@@ -53,9 +60,10 @@ public class LoginPage {
             else {
                 this.manager = userHib.getManager(user);
             }
-        }
+            openMainWindow();
+        } else loginLabel.setText("Details entered are incorrect, or the account is not registered in the system.");
 
-        openMainWindow();
+
     }
 
     private void openMainWindow() throws IOException {
@@ -72,5 +80,10 @@ public class LoginPage {
         } else mainPage.initData(this.manager, true);
 
         stage.show();
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        loginLabel.setText("");
     }
 }

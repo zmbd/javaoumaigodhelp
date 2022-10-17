@@ -24,20 +24,26 @@ public class Forum {
     private User user;
     @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Comment> comments;
+    private String firstCommentText;
 
     public Forum(String title, User user) {
         this.title = title;
         this.user = user;
     }
 
-    public Forum(String title, User user, List<Comment> comments) {
+    public Forum(String title, User user, List<Comment> comments, String firstCommentText) {
         this.title = title;
         this.user = user;
         this.comments = comments;
+        this.firstCommentText = firstCommentText;
     }
 
     @Override
     public String toString() {
         return title;
+    }
+
+    public String displayMessage() {
+        return user.getName() + " commented:\n" + firstCommentText;
     }
 }

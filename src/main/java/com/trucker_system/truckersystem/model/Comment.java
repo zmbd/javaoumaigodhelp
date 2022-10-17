@@ -37,6 +37,14 @@ public class Comment {
         this.user = user;
     }
 
+    @Override
+    public String toString() {
+        return user.getName() + " replied: " + commentText;
+    }
+
+    public String displayMessage() {
+        return user.getName() + " commented:\n" + commentText;
+    }
 
 
 }

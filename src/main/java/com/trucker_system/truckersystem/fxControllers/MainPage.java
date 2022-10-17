@@ -193,6 +193,18 @@ public class MainPage implements Initializable {
     public ListView<Forum> forumListView;
     @FXML
     public TreeView<String> forumTreeView;
+    @FXML
+    public MenuItem forumCreateTopic;
+    @FXML
+    public MenuItem forumDeleteThread;
+    @FXML
+    public MenuItem forumReply;
+    @FXML
+    public MenuItem forumDelete;
+    @FXML
+    public MenuItem forumEditReply;
+    @FXML
+    public MenuItem forumEditTopic;
 
 
     private Trucker trucker = null;
@@ -208,6 +220,7 @@ public class MainPage implements Initializable {
     private List<Cargo> allCargos = null;
     private List<Forum> allForumThreads = null;
     private Forum selectedForumThread = null;
+    private Comment selectedComment = null;
     private EntityManagerFactory entityManagerFactory = null;
     private UserHib userHib = null;
     private CargoHib cargoHib = null;
@@ -233,6 +246,9 @@ public class MainPage implements Initializable {
 
     public void updateListView(Trucker trucker, Manager manager) {
         this.unassignedCargos = cargoHib.getUnassignedCargos();
+
+        unassignedCargosListView.getItems().clear();
+        cargosListView.getItems().clear();
 
         this.unassignedCargos.forEach(uc -> {
             unassignedCargosListView.getItems().add(uc.getClient());
@@ -283,13 +299,25 @@ public class MainPage implements Initializable {
         });
     }
 
-    public void populateForumTreeView() {
-//        TreeItem<String> rootItem = new TreeItem<>(this.selectedForumThread.getUser().getName() + " commented: " + this.selectedForumThread.getComments().get(1).getCommentText());
-//
-//        forumTreeView.setRoot(rootItem);
-        this.selectedForumThread.getComments();
+    public void populateForumTreeView(Forum forum) {
+        if (forum != null) {
+            TreeItem<String> rootItem = new TreeItem<>(forum.displayMessage());
 
+            forum.getComments().forEach(comment -> setChildComment(comment, rootItem, forum));
+
+            forumTreeView.setRoot(rootItem);
+        }
     }
+
+    public void setChildComment(Comment comment, TreeItem<String> parentItem, Forum forum) {
+        if (comment != null && forum.getId() == comment.getForum().getId()) {
+            TreeItem<String> treeItem = new TreeItem<>(comment.displayMessage());
+            parentItem.setExpanded(true);
+            parentItem.getChildren().add(treeItem);
+            if(comment.getReplies() != null) comment.getReplies().forEach(child -> setChildComment(child, treeItem, forum));
+        }
+    }
+
 
 
     private ObservableList<UsersTable> getAllUsers() {
@@ -335,7 +363,8 @@ public class MainPage implements Initializable {
         List<Truck> trucks = truckHib.getAllTrucks();
         trucks.forEach(truck -> {
             trucksChoiceBox.getItems().add(truck.getBrand() + " " + truck.getModel());
-            if (truck.getId() == this.trucker.getTruck().getId())
+            System.out.println(this.trucker);
+            if (this.trucker.getTruck() != null && truck.getId() == this.trucker.getTruck().getId())
                 trucksChoiceBox.getSelectionModel().select(truck.getBrand() + " " + truck.getModel());
         });
 
@@ -346,6 +375,12 @@ public class MainPage implements Initializable {
             hpText.setText(String.valueOf(truck.getHp()));
             engineText.setText(String.valueOf(truck.getEngine()));
             releaseText.setText(String.valueOf(truck.getReleaseYear()));
+        } else {
+            brandText.setText("N/A");
+            modelText.setText("N/A");
+            hpText.setText(String.valueOf(0));
+            engineText.setText(String.valueOf(0));
+            releaseText.setText(String.valueOf(0));
         }
 
         this.assignedCargos = cargoHib.getCargoListById(this.trucker);
@@ -364,11 +399,10 @@ public class MainPage implements Initializable {
         if (isManager) {
             this.manager = (Manager) value;
             tabPane.getTabs().remove(truckerTripsTab);
-//            truckerAnchorPane.setVisible(false);
-//            truckerAnchorPaneTruck.setVisible(false);
-//            truckerAnchorPaneTrips.setVisible(false);
         } else {
             this.trucker = (Trucker) value;
+            tabPane.getTabs().remove(managerTrucksTab);
+            tabPane.getTabs().remove(managerCargoTab);
             tripsTab();
         }
 
@@ -828,8 +862,8 @@ public class MainPage implements Initializable {
         listView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Forum>() {
             @Override
             public void changed(ObservableValue<? extends Forum> observableValue, Forum forum, Forum t1) {
-                selectedForumThread = listView.getSelectionModel().getSelectedItem();
-                populateForumTreeView();
+                selectedForumThread = forumHib.getForumById(listView.getSelectionModel().getSelectedItem().getId());
+                populateForumTreeView(selectedForumThread);
             }
         });
     }
@@ -856,6 +890,16 @@ public class MainPage implements Initializable {
 
         CreateUserModal createUserModal = fxmlLoader.getController();
         createUserModal.initData(this.userHib);
+        createUserModal.setUserConsumerCallback(user -> {
+            System.out.println(user.getLogin());
+            if (user.getDtype().equals("Trucker")) {
+                this.allTruckers = this.userHib.getAllTruckers();
+                usersTableView.setItems(getAllUsers());
+            } else {
+                this.allManagers = this.userHib.getAllManagers();
+                usersTableView.setItems(getAllUsers());
+            }
+        });
 
         stage.setScene(scene);
         stage.showAndWait();
@@ -895,10 +939,69 @@ public class MainPage implements Initializable {
         addCargoModal.initData(this.cargoHib);
         addCargoModal.setCargoConsumerCallback(cargo -> {
             this.allCargos = this.cargoHib.getAllCargos();
+            this.unassignedCargos = this.cargoHib.getUnassignedCargos();
+            unassignedCargosListView.getItems().clear();
+            this.unassignedCargos.forEach(c -> {
+                unassignedCargosListView.getItems().add(c.getClient());
+            });
             cargoTableView.setItems(getAllCargos());
+            selectListViewItem(unassignedCargosListView, this.unassignedCargos, cargosListView);
         });
 
         stage.setScene(scene);
         stage.showAndWait();
+    }
+
+    public void onCreateTopic(ActionEvent actionEvent) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("create-forum-modal.fxml"));
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        Scene scene = new Scene(fxmlLoader.load());
+
+        CreateForumModal createForumModal = fxmlLoader.getController();
+        createForumModal.initData(this.forumHib, this.trucker != null ? this.trucker : this.manager);
+        createForumModal.setForumConsumerCallback(forum -> {
+            this.allForumThreads = this.forumHib.getAllForumsThreads();
+            forumListView.getItems().setAll(this.allForumThreads);
+        });
+
+        stage.setScene(scene);
+        stage.showAndWait();
+    }
+
+    public void onEditTopic(ActionEvent actionEvent) {
+    }
+
+    public void onDeleteThread(ActionEvent actionEvent) {
+    }
+
+    public void onReply(ActionEvent actionEvent) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("forumthread-reply-modal.fxml"));
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        Scene scene = new Scene(fxmlLoader.load());
+
+        ForumthreadReplyModal forumthreadReplyModal = fxmlLoader.getController();
+
+        var selectedItem = forumTreeView.getSelectionModel().getSelectedItem() == null ? forumTreeView.getTreeItem(0) : forumTreeView.getSelectionModel().getSelectedItem();
+
+
+        String[] parts = selectedItem.getValue().split(" commented:");
+        Comment parentComment = this.commentHib.getCommentByValue(parts[1].trim(), this.selectedForumThread);
+
+        forumthreadReplyModal.initData(this.selectedForumThread, this.commentHib, this.manager != null ? this.manager : this.trucker, parentComment);
+        forumthreadReplyModal.setCommentConsumerCallback(comment -> {
+            Forum forum = this.forumHib.getForumById(this.selectedForumThread.getId());
+            populateForumTreeView(forum);
+        });
+
+        stage.setScene(scene);
+        stage.showAndWait();
+    }
+
+    public void onEditReply(ActionEvent actionEvent) {
+    }
+
+    public void onDeleteComment(ActionEvent actionEvent) {
     }
 }

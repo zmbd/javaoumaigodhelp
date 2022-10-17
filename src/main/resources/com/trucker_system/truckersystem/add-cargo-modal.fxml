@@ -7,8 +7,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane prefHeight="323.0" prefWidth="452.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.trucker_system.truckersystem.fxControllers.AddCargoModal">
+<AnchorPane prefHeight="359.0" prefWidth="452.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.trucker_system.truckersystem.fxControllers.AddCargoModal">
    <children>
       <Label layoutX="174.0" layoutY="31.0" text="Add cargo">
          <font>
@@ -25,6 +24,7 @@
       <TextField fx:id="addPickupField" layoutX="110.0" layoutY="136.0" prefHeight="26.0" prefWidth="237.0" promptText="France, Paris, street 19" />
       <TextField fx:id="addDeliveryField" layoutX="110.0" layoutY="166.0" prefHeight="26.0" prefWidth="237.0" promptText="Spain, Madrid, steet 222" />
       <DatePicker fx:id="selectDeadlineDate" layoutX="110.0" layoutY="196.0" prefHeight="26.0" prefWidth="237.0" promptText="Pick delivery deadline date" />
-      <Button fx:id="addCargoBtn" layoutX="166.0" layoutY="261.0" mnemonicParsing="false" onAction="#onCargoAdd" prefHeight="35.0" prefWidth="120.0" text="ADD CARGO" />
+      <Button fx:id="addCargoBtn" layoutX="166.0" layoutY="310.0" mnemonicParsing="false" onAction="#onCargoAdd" prefHeight="35.0" prefWidth="120.0" text="ADD CARGO" />
+      <Label fx:id="labelValidate" alignment="CENTER" layoutX="50.0" layoutY="257.0" prefHeight="17.0" prefWidth="356.0" text="Label" textFill="#c91a1a" />
    </children>
 </AnchorPane>

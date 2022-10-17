@@ -11,6 +11,9 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.io.IOException;
 
+
+/* MATAS ČYPAS PRIF 20-1 */
+
 public class HelloApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {

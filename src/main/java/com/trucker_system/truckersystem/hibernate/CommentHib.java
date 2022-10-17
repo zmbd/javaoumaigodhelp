@@ -2,6 +2,7 @@ package com.trucker_system.truckersystem.hibernate;
 
 import com.trucker_system.truckersystem.model.Comment;
 import com.trucker_system.truckersystem.model.Forum;
+import com.trucker_system.truckersystem.model.User;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -65,6 +66,24 @@ public class CommentHib {
         return comment;
     }
 
+    public List<Comment> getAllCommentsOfForum(Forum forum) {
+        entityManager = emf.createEntityManager();
+        List<Comment> commentList = null;
+        try {
+            entityManager.getTransaction().begin();
+            String select = "FROM Comment c WHERE c.forum=:forum";
+            Query query = entityManager.createQuery(select);
+            query.setParameter("forum", forum);
+            commentList = query.getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (entityManager != null) entityManager.close();
+        }
+
+        return commentList;
+    }
+
     public List<Comment> getAllComments() {
         entityManager = emf.createEntityManager();
         List<Comment> commentList = null;
@@ -81,5 +100,25 @@ public class CommentHib {
         }
 
         return commentList;
+    }
+
+    public Comment getCommentByValue(String value, Forum forum) {
+        entityManager = emf.createEntityManager();
+        Comment comment = null;
+        try {
+            entityManager.getTransaction().begin();
+            String select = "FROM Comment c WHERE c.commentText=:value AND c.forum=:forum";
+            Query query = entityManager.createQuery(select);
+            query.setParameter("value", value);
+            query.setParameter("forum", forum);
+
+            comment = (Comment) query.getSingleResult();
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (entityManager != null) entityManager.close();
+        }
+        return comment;
     }
 }

@@ -2,6 +2,7 @@ package com.trucker_system.truckersystem.hibernate;
 
 import com.trucker_system.truckersystem.model.Forum;
 import com.trucker_system.truckersystem.model.Truck;
+import com.trucker_system.truckersystem.model.User;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -81,5 +82,18 @@ public class ForumHib {
         }
 
         return forumList;
+    }
+
+    public void updateForum(Forum forum) {
+        entityManager = emf.createEntityManager();
+        try {
+            entityManager.getTransaction().begin();
+            entityManager.merge(forum);
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (entityManager != null) entityManager.close();
+        }
     }
 }

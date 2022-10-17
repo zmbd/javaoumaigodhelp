@@ -22,6 +22,13 @@ public class Trucker extends User implements Serializable {
     @JoinColumn(name = "truck_id")
     private Truck truck;
 
+    public Trucker(String dtype, String login, String password, String email, String name, String surname, String phoneNumber) {
+        super(dtype, login, password, email, name, surname, phoneNumber);
+        this.finishedTrips = finishedTrips;
+        this.cargosList = cargosList;
+        this.truck = truck;
+    }
+
     public Trucker(String login, String password, String email, String name, String surname, String phoneNumber, int finishedTrips, List<Cargo> cargosList, Truck truck) {
         super(login, password, email, name, surname, phoneNumber);
         this.finishedTrips = finishedTrips;

@@ -1,6 +1,5 @@
 package com.trucker_system.truckersystem.hibernate;
 
-import com.trucker_system.truckersystem.model.Cargo;
 import com.trucker_system.truckersystem.model.Manager;
 import com.trucker_system.truckersystem.model.Trucker;
 import com.trucker_system.truckersystem.model.User;
@@ -8,7 +7,6 @@ import com.trucker_system.truckersystem.model.User;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
-import javax.persistence.criteria.CriteriaQuery;
 import java.util.List;
 
 public class UserHib {
@@ -83,7 +81,7 @@ public class UserHib {
         return managerList;
     }
 
-    public List<User> getAllUsersByLogin() {
+    public List<User> getAllUsers() {
         entityManager = emf.createEntityManager();
         List<User> users = null;
         try {

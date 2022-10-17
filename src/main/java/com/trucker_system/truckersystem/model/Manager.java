@@ -17,6 +17,11 @@ import java.io.Serializable;
 public class Manager extends User implements Serializable {
     private boolean isAdmin;
 
+    public Manager(String dtype, String login, String password, String email, String name, String surname, String phoneNumber, boolean isAdmin) {
+        super(dtype, login, password, email, name, surname, phoneNumber);
+        this.isAdmin = isAdmin;
+    }
+
     public Manager(String login, String password, String email, String name, String surname, String phoneNumber, boolean isAdmin) {
         super(login, password, email, name, surname, phoneNumber);
         this.isAdmin = isAdmin;

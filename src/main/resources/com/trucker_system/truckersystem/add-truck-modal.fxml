@@ -6,8 +6,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane prefHeight="320.0" prefWidth="385.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.trucker_system.truckersystem.fxControllers.AddTruckModal">
+<AnchorPane prefHeight="365.0" prefWidth="385.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.trucker_system.truckersystem.fxControllers.AddTruckModal">
    <children>
       <Label alignment="CENTER" contentDisplay="TOP" layoutX="39.0" layoutY="24.0" prefHeight="17.0" prefWidth="308.0" text="Add Truck" textAlignment="CENTER">
          <font>
@@ -24,6 +23,7 @@
       <TextField fx:id="addHpfield" layoutX="101.0" layoutY="136.0" prefHeight="26.0" prefWidth="194.0" promptText="200" />
       <TextField fx:id="addEngineField" layoutX="101.0" layoutY="166.0" prefHeight="26.0" prefWidth="194.0" promptText="10.5" />
       <TextField fx:id="addReleaseField" layoutX="101.0" layoutY="196.0" prefHeight="26.0" prefWidth="194.0" promptText="2022" />
-      <Button fx:id="addBtn" layoutX="137.0" layoutY="254.0" mnemonicParsing="false" onAction="#onTruckAdd" prefHeight="35.0" prefWidth="112.0" style="-fx-background-color: #24a0ed#24a0ed;" text="ADD" textFill="WHITE" />
+      <Button fx:id="addBtn" layoutX="137.0" layoutY="303.0" mnemonicParsing="false" onAction="#onTruckAdd" prefHeight="35.0" prefWidth="112.0" style="-fx-background-color: #24a0ed#24a0ed;" text="ADD" textFill="WHITE" />
+      <Label fx:id="labelValidate" alignment="CENTER" layoutX="61.0" layoutY="250.0" prefHeight="17.0" prefWidth="261.0" text="Label" textFill="#c61818" />
    </children>
 </AnchorPane>
