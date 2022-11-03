@@ -50,12 +50,12 @@ public abstract class User implements Serializable {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", dtype='" + dtype + '\'' +
-                ", login='" + login + '\'' +
-                ", password='" + password + '\'' +
-                ", email='" + email + '\'' +
-                ", name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
+                ", dtype='" + dtype +
+                ", login='" + login +
+                ", password='" + password +
+                ", email='" + email +
+                ", name='" + name +
+                ", surname='" + surname +
                 '}';
     }
 }

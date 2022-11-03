@@ -44,7 +44,7 @@ public class LoginPage implements Initializable {
     private Manager manager = null;
 
     public void loginAction(ActionEvent event) throws IOException {
-        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("TruckerSystem");
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("truckerdb");
         UserHib userHib = new UserHib(entityManagerFactory);
 
         User user = userHib.authenticateLogin(loginField.getText(), pwField.getText());

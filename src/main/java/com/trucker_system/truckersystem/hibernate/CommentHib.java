@@ -31,13 +31,62 @@ public class CommentHib {
         }
     }
 
+    public void updateComment(Comment comment) {
+        entityManager = emf.createEntityManager();
+        try {
+            entityManager.getTransaction().begin();
+            entityManager.merge(comment);
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (entityManager != null) entityManager.close();
+        }
+    }
+
+    public Comment getParentComment(Forum forum) {
+        Comment comment = null;
+
+        entityManager = emf.createEntityManager();
+        try {
+            entityManager.getTransaction().begin();
+            String select = "FROM Comment c WHERE forum=:forum AND parentComment=null";
+            Query query = entityManager.createQuery(select);
+            query.setParameter("forum", forum);
+            comment = (Comment) query.getSingleResult();
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (entityManager != null) entityManager.close();
+        }
+
+        return comment;
+    }
+
     public void deleteComment(int id) {
         entityManager = emf.createEntityManager();
         try {
             entityManager.getTransaction().begin();
             Comment persistentInstance = entityManager.find(Comment.class, id);
-            //Cargo persistentInstance = entityManager.merge(cargo);
             entityManager.remove(persistentInstance);
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (entityManager != null) entityManager.close();
+        }
+    }
+
+    public void deleteCommentsByForum(Forum forum) {
+        entityManager = emf.createEntityManager();
+        try {
+            entityManager.getTransaction().begin();
+            String select = "DELETE Comment c WHERE c.forum=:forum";
+            Query query = entityManager.createQuery(select);
+            query.setParameter("forum", forum);
+            query.executeUpdate();
+
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             e.printStackTrace();

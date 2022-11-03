@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="350.0" prefWidth="361.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.trucker_system.truckersystem.fxControllers.CreateForumModal">
+   <children>
+      <Label layoutX="112.0" layoutY="22.0" text="Create new thread">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <Label alignment="CENTER_RIGHT" layoutX="20.0" layoutY="66.0" prefHeight="17.0" prefWidth="53.0" text="Topic:" />
+      <Label alignment="CENTER_RIGHT" layoutX="20.0" layoutY="145.0" text="Message:" />
+      <TextArea fx:id="forumMessageText" layoutX="83.0" layoutY="107.0" prefHeight="119.0" prefWidth="230.0" promptText="Message field" />
+      <TextField fx:id="forumTopicText" layoutX="83.0" layoutY="62.0" prefHeight="26.0" prefWidth="230.0" promptText="Why am I trucker?" />
+      <Button fx:id="forumPostBtn" layoutX="143.0" layoutY="297.0" mnemonicParsing="false" onAction="#onCreatePost" prefHeight="33.0" prefWidth="76.0" text="Post" />
+      <Label fx:id="labelValidate" alignment="CENTER" layoutX="41.0" layoutY="253.0" prefHeight="17.0" prefWidth="290.0" textFill="#d31717" />
+   </children>
+</AnchorPane>

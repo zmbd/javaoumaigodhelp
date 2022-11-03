@@ -68,7 +68,7 @@ public class CargoDetailPage extends Stage {
 
     private Stage stage = null;
 
-    private final EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("TruckerSystem");
+    private final EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("truckerdb");
     private final UserHib userHib = new UserHib(entityManagerFactory);
     private final CargoHib cargoHib = new CargoHib(entityManagerFactory);
 

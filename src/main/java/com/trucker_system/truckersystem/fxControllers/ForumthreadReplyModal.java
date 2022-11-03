@@ -31,7 +31,6 @@ public class ForumthreadReplyModal {
     private CommentHib commentHib;
 
     public void setCommentConsumerCallback(Consumer<Comment> commentConsumer) { this.commentConsumer = commentConsumer; }
-
     public void initData(Forum forum, CommentHib commentHib, User user, Comment parentComment) {
         this.forum = forum;
         this.commentHib = commentHib;
@@ -43,6 +42,7 @@ public class ForumthreadReplyModal {
         if (!replyMessageText.getText().isEmpty()) {
             Comment comment = new Comment(replyMessageText.getText(), this.forum, null, parentComment, user);
             commentHib.createComment(comment);
+
             commentConsumer.accept(comment);
 
             Stage stage = (Stage) replyBtn.getScene().getWindow();

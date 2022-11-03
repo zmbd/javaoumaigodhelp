@@ -19,14 +19,12 @@ public class Comment {
     private int id;
     private String commentText;
     @ManyToOne
-    @JoinColumn(name = "forum_id")
     private Forum forum;
     @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Comment> replies;
     @ManyToOne
     private Comment parentComment;
     @ManyToOne
-    @JoinColumn(name = "user_id")
     private User user;
 
     public Comment(String commentText, Forum forum, List<Comment> replies, Comment parentComment, User user) {

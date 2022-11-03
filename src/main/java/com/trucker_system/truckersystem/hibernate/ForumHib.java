@@ -36,8 +36,21 @@ public class ForumHib {
         try {
             entityManager.getTransaction().begin();
             Forum persistentInstance = entityManager.find(Forum.class, id);
-            //Cargo persistentInstance = entityManager.merge(cargo);
             entityManager.remove(persistentInstance);
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (entityManager != null) entityManager.close();
+        }
+    }
+
+    public void deleteForumByForum(Forum forum) {
+        entityManager = emf.createEntityManager();
+        try {
+            entityManager.getTransaction().begin();
+            Forum persistanceInstance = entityManager.find(Forum.class, forum.getId());
+            entityManager.remove(persistanceInstance);
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             e.printStackTrace();

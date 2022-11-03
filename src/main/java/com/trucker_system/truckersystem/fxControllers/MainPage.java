@@ -16,6 +16,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
@@ -303,18 +304,27 @@ public class MainPage implements Initializable {
         if (forum != null) {
             TreeItem<String> rootItem = new TreeItem<>(forum.displayMessage());
 
-            forum.getComments().forEach(comment -> setChildComment(comment, rootItem, forum));
+            int index = 0;
+            for (Comment comment : forum.getComments()) {
+                if (index > 0) {
+                    System.out.println("INDEX: " + index);
+                    setChildComment(comment, comment.getParentComment(), rootItem, forum);
+                }
+                index++;
+            }
 
             forumTreeView.setRoot(rootItem);
         }
     }
 
-    public void setChildComment(Comment comment, TreeItem<String> parentItem, Forum forum) {
-        if (comment != null && forum.getId() == comment.getForum().getId()) {
+    public void setChildComment(Comment comment, Comment parent, TreeItem<String> parentItem, Forum forum) {
+        if (comment.getForum().getId() == forum.getId()) {
+            System.out.println("Comment ID: " + comment.getId() + " , " + comment.getCommentText() + "\tParent: " + parent.getId() + ", " + parent.getCommentText());
             TreeItem<String> treeItem = new TreeItem<>(comment.displayMessage());
-            parentItem.setExpanded(true);
             parentItem.getChildren().add(treeItem);
-            if(comment.getReplies() != null) comment.getReplies().forEach(child -> setChildComment(child, treeItem, forum));
+            parentItem.setExpanded(true);
+
+            if (comment.getReplies() != null) comment.getReplies().forEach(reply -> setChildComment(reply, reply.getParentComment(), treeItem, forum));
         }
     }
 
@@ -463,7 +473,7 @@ public class MainPage implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        entityManagerFactory = Persistence.createEntityManagerFactory("TruckerSystem");
+        entityManagerFactory = Persistence.createEntityManagerFactory("truckerdb");
         userHib = new UserHib(entityManagerFactory);
         cargoHib = new CargoHib(entityManagerFactory);
         truckHib = new TruckHib(entityManagerFactory);
@@ -862,8 +872,11 @@ public class MainPage implements Initializable {
         listView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Forum>() {
             @Override
             public void changed(ObservableValue<? extends Forum> observableValue, Forum forum, Forum t1) {
-                selectedForumThread = forumHib.getForumById(listView.getSelectionModel().getSelectedItem().getId());
-                populateForumTreeView(selectedForumThread);
+                if (listView.getSelectionModel().getSelectedItem() != null) {
+                    selectedForumThread = forumHib.getForumById(listView.getSelectionModel().getSelectedItem().getId());
+                    selectedForumThread.setComments(commentHib.getAllCommentsOfForum(selectedForumThread));
+                    populateForumTreeView(selectedForumThread);
+                }
             }
         });
     }
@@ -962,6 +975,7 @@ public class MainPage implements Initializable {
         createForumModal.initData(this.forumHib, this.trucker != null ? this.trucker : this.manager);
         createForumModal.setForumConsumerCallback(forum -> {
             this.allForumThreads = this.forumHib.getAllForumsThreads();
+
             forumListView.getItems().setAll(this.allForumThreads);
         });
 
@@ -969,10 +983,44 @@ public class MainPage implements Initializable {
         stage.showAndWait();
     }
 
-    public void onEditTopic(ActionEvent actionEvent) {
+    public void onEditTopic(ActionEvent actionEvent) throws IOException {
+        Forum forum = forumListView.getSelectionModel().getSelectedItem();
+
+        boolean isForumCreator = this.trucker != null && this.trucker.getId() == forum.getUser().getId();
+        boolean isAdmin = this.manager != null && this.manager.isAdmin();
+
+        if (forum != null && isForumCreator || isAdmin) {
+            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("forum-topic-edit.fxml"));
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            Scene scene = new Scene(fxmlLoader.load());
+
+            ForumTopicEdit forumTopicEdit = fxmlLoader.getController();
+            assert forum != null;
+            forumTopicEdit.initData(this.forumHib, forum);
+            forumTopicEdit.setForumConsumerCallback(f -> {
+                this.allForumThreads = this.forumHib.getAllForumsThreads();
+                forumListView.getItems().setAll(this.allForumThreads);
+                populateForumTreeView(f);
+            });
+
+            stage.setScene(scene);
+            stage.showAndWait();
+        }
     }
 
     public void onDeleteThread(ActionEvent actionEvent) {
+        Forum forum = forumListView.getSelectionModel().getSelectedItem();
+
+        boolean isForumCreator = this.trucker != null && this.trucker.getId() == forum.getUser().getId();
+        boolean isAdmin = this.manager != null && this.manager.isAdmin();
+
+        if (isForumCreator || isAdmin) {
+            this.commentHib.deleteCommentsByForum(forum);
+            //this.forumHib.deleteForum(forum.getId());
+            //this.allForumThreads = this.forumHib.getAllForumsThreads();
+            //forumListView.getItems().setAll(this.allForumThreads);
+        }
     }
 
     public void onReply(ActionEvent actionEvent) throws IOException {
@@ -985,13 +1033,13 @@ public class MainPage implements Initializable {
 
         var selectedItem = forumTreeView.getSelectionModel().getSelectedItem() == null ? forumTreeView.getTreeItem(0) : forumTreeView.getSelectionModel().getSelectedItem();
 
-
         String[] parts = selectedItem.getValue().split(" commented:");
         Comment parentComment = this.commentHib.getCommentByValue(parts[1].trim(), this.selectedForumThread);
 
         forumthreadReplyModal.initData(this.selectedForumThread, this.commentHib, this.manager != null ? this.manager : this.trucker, parentComment);
-        forumthreadReplyModal.setCommentConsumerCallback(comment -> {
+        forumthreadReplyModal.setCommentConsumerCallback(c -> {
             Forum forum = this.forumHib.getForumById(this.selectedForumThread.getId());
+            forum.setComments(this.commentHib.getAllCommentsOfForum(forum));
             populateForumTreeView(forum);
         });
 

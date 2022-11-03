@@ -6,6 +6,11 @@ module com.trucker_system.truckersystem {
     requires java.persistence;
     requires java.sql;
     requires org.hibernate.orm.core;
+    requires spring.context;
+    requires spring.web;
+    requires com.google.gson;
+    requires com.fasterxml.jackson.core;
+    requires spring.core;
 
 
     opens com.trucker_system.truckersystem.fxControllers to javafx.base, javafx.fxml;

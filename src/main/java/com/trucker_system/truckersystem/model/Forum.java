@@ -22,8 +22,9 @@ public class Forum {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-    @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Comment> comments;
+    @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @org.hibernate.annotations.ForeignKey(name = "none")
+    private transient List<Comment> comments;
     private String firstCommentText;
 
     public Forum(String title, User user) {

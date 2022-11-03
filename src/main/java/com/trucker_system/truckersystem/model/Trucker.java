@@ -36,6 +36,12 @@ public class Trucker extends User implements Serializable {
         this.truck = truck;
     }
 
+    public Trucker(String login, String password, String email, String name, String surname, String phoneNumber, int finishedTrips, Truck truck) {
+        super(login, password, email, name, surname, phoneNumber);
+        this.finishedTrips = finishedTrips;
+        this.truck = truck;
+    }
+
     public Trucker(String login, String password, String email, String name, String surname, String phoneNumber, int finishedTrips) {
         super(login, password, email, name, surname, phoneNumber);
         this.finishedTrips = finishedTrips;
@@ -55,7 +61,7 @@ public class Trucker extends User implements Serializable {
     public String toString() {
         return "Trucker{" +
                 "finishedTrips=" + finishedTrips +
-                ", cargosList=" + cargosList +
+                ", truck=" + truck +
                 '}';
     }
 

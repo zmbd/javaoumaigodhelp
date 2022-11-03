@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import java.util.List;
+import java.util.Objects;
 
 public class UserHib {
     EntityManager entityManager = null;
@@ -198,5 +199,90 @@ public class UserHib {
         if (user != null) return user;
 
         return null;
+    }
+
+    public boolean findByLogin(String login) {
+        boolean value = false;
+        entityManager = emf.createEntityManager();
+        try {
+            entityManager.getTransaction().begin();
+            String select = "FROM User u WHERE u.login=:login";
+            Query query = entityManager.createQuery(select);
+            query.setParameter("login", login);
+
+            if (query.getSingleResult() != null) value = true;
+
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (entityManager != null) entityManager.close();
+        }
+
+        return value;
+    }
+
+    public String getDtypeById(int id) {
+        String value = null;
+        entityManager = emf.createEntityManager();
+        try {
+            entityManager.getTransaction().begin();
+            String select = "SELECT dtype FROM User u WHERE id=:id";
+            Query query = entityManager.createQuery(select);
+            query.setParameter("id", id);
+            value = (String) query.getSingleResult();
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (entityManager != null) entityManager.close();
+        }
+
+        return value;
+    }
+
+    public <T> T getUserByIdType(int id, String dtype) {
+        T user = null;
+
+        entityManager = emf.createEntityManager();
+        try {
+            entityManager.getTransaction().begin();
+            String select = "FROM User u WHERE id=:id AND dtype=:dtype";
+            Query query = entityManager.createQuery(select);
+            query.setParameter("id", id);
+            query.setParameter("dtype", dtype);
+
+            user = (T) query.getSingleResult();
+
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (entityManager != null) entityManager.close();
+        }
+
+        return  user;
+    }
+
+    public User getUserById(int id) {
+        User user = null;
+        entityManager = emf.createEntityManager();
+
+        try {
+            entityManager.getTransaction().begin();
+            String select = "FROM User u WHERE u.id=:id";
+            Query query = entityManager.createQuery(select);
+            query.setParameter("id", id);
+
+            user = (User) query.getSingleResult();
+
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (entityManager != null) entityManager.close();
+        }
+
+        return user;
     }
 }

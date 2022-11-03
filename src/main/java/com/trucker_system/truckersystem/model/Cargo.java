@@ -49,6 +49,17 @@ public class Cargo {
         this.trucker = trucker;
     }
 
+    public Cargo(String client, String startDestination, String finalDestination, LocalDate assignedAt, LocalDate deliverUntil, String cargo, boolean finished, Trucker trucker) {
+        this.client = client;
+        this.startDestination = startDestination;
+        this.finalDestination = finalDestination;
+        this.assignedAt = assignedAt;
+        this.deliverUntil = deliverUntil;
+        this.cargo = cargo;
+        this.finished = finished;
+        this.trucker = trucker;
+    }
+
     public Cargo(String client, String startDestination, String finalDestination, LocalDate assignedAt, LocalDate deliverUntil, boolean finished) {
         this.client = client;
         this.startDestination = startDestination;

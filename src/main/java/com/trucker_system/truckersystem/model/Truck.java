@@ -23,8 +23,9 @@ public class Truck {
     private int hp;
     private double engine;
     private int releaseYear;
+
     @OneToMany (mappedBy = "truck", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Trucker> trucker;
+    private transient List<Trucker> trucker;
 
     public Truck(int id, String brand, String model, int hp, double engine, int releaseYear) {
         this.id = id;
