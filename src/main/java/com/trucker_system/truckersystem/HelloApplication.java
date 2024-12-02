@@ -1,16 +1,11 @@
 package com.trucker_system.truckersystem;
 
-import com.trucker_system.truckersystem.fxControllers.LoginPage;
-import com.trucker_system.truckersystem.hibernate.UserHib;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import java.io.IOException;
-
 
 /* MATAS ČYPAS PRIF 20-1 */
 
@@ -26,8 +21,5 @@ public class HelloApplication extends Application {
 
     public static void main(String[] args) {
         launch();
-
-
-
     }
 }

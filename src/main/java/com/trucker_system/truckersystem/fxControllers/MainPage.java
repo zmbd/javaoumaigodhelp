@@ -480,7 +480,6 @@ public class MainPage implements Initializable {
         forumHib = new ForumHib(entityManagerFactory);
         commentHib = new CommentHib(entityManagerFactory);
 
-
         this.trucksChoiceBox.setOnAction(this::onTruckSelected);
         this.truckersTripsChoiceBox.setOnAction(this::onTripSelected);
 
