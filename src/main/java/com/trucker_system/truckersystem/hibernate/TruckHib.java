@@ -36,7 +36,6 @@ public class TruckHib {
         try {
             entityManager.getTransaction().begin();
             Truck persistentInstance = entityManager.find(Truck.class, id);
-            //Cargo persistentInstance = entityManager.merge(cargo);
             entityManager.remove(persistentInstance);
             entityManager.getTransaction().commit();
         } catch (Exception e) {

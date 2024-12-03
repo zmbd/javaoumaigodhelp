@@ -229,6 +229,8 @@ public class MainPage implements Initializable {
     private ForumHib forumHib = null;
     private CommentHib commentHib = null;
     private EditType editType;
+    private CargoTableInitializer cargoTableInitializer;
+    private TripHandler tripHandler;
 
     public List<Cargo> getUnassignedCargos() {
         return cargoHib.getUnassignedCargos();
@@ -328,8 +330,6 @@ public class MainPage implements Initializable {
         }
     }
 
-
-
     private ObservableList<UsersTable> getAllUsers() {
         ObservableList<UsersTable> observableList = FXCollections.observableArrayList();
         this.allTruckers = userHib.getAllTruckers();
@@ -371,21 +371,27 @@ public class MainPage implements Initializable {
 
     public void tripsTab() {
         List<Truck> trucks = truckHib.getAllTrucks();
+
+        // Populate trucks choice box
         trucks.forEach(truck -> {
             trucksChoiceBox.getItems().add(truck.getBrand() + " " + truck.getModel());
-            System.out.println(this.trucker);
-            if (this.trucker.getTruck() != null && truck.getId() == this.trucker.getTruck().getId())
+            if (this.trucker.getTruck() != null && truck.getId() == this.trucker.getTruck().getId()) {
                 trucksChoiceBox.getSelectionModel().select(truck.getBrand() + " " + truck.getModel());
+            }
         });
 
+        // Initialize truck details if a truck is selected
         if (trucksChoiceBox.getSelectionModel().getSelectedItem() != null) {
-            Truck truck = trucks.stream().filter(t -> t.getId() == this.trucker.getTruck().getId()).findAny().orElse(null);
-            brandText.setText(truck.getBrand());
-            modelText.setText(truck.getModel());
-            hpText.setText(String.valueOf(truck.getHp()));
-            engineText.setText(String.valueOf(truck.getEngine()));
-            releaseText.setText(String.valueOf(truck.getReleaseYear()));
+            Truck truck = trucks.stream()
+                    .filter(t -> t.getId() == this.trucker.getTruck().getId())
+                    .findAny()
+                    .orElse(null);
+
+            if (truck != null) {
+                tripHandler.handleTruckSelection(null, trucksChoiceBox, trucks);
+            }
         } else {
+            // Set default values if no truck is selected
             brandText.setText("N/A");
             modelText.setText("N/A");
             hpText.setText(String.valueOf(0));
@@ -393,15 +399,23 @@ public class MainPage implements Initializable {
             releaseText.setText(String.valueOf(0));
         }
 
+        // Get and set assigned cargos
         this.assignedCargos = cargoHib.getCargoListById(this.trucker);
+        tripHandler.setAssignedCargos(this.assignedCargos);
 
+        // Populate trips choice box
         this.assignedCargos.forEach(cargo -> {
             truckersTripsChoiceBox.getItems().add(cargo.getClient() + ", " + cargo.getAssignedAt());
         });
 
+        // Select first trip by default
         truckersTripsChoiceBox.getSelectionModel().select(0);
-    }
 
+        // Trigger initial trip selection if there are any trips
+        if (!truckersTripsChoiceBox.getItems().isEmpty()) {
+            tripHandler.handleTripSelection(null, truckersTripsChoiceBox);
+        }
+    }
 
     public <T> void initData(T value, boolean isManager) {
         this.isManager = isManager;
@@ -480,6 +494,13 @@ public class MainPage implements Initializable {
         forumHib = new ForumHib(entityManagerFactory);
         commentHib = new CommentHib(entityManagerFactory);
 
+        tripHandler = new TripHandler(
+                clientText, assignedAtText, deliveryUntilText,
+                pickupAddressText, deliveryAddressText, cargoDetailsText,
+                tripStatusText, brandText, modelText, hpText,
+                engineText, releaseText
+        );
+
         this.trucksChoiceBox.setOnAction(this::onTruckSelected);
         this.truckersTripsChoiceBox.setOnAction(this::onTripSelected);
 
@@ -487,109 +508,9 @@ public class MainPage implements Initializable {
         selectForumListView(forumListView);
 
         initializeTrucksTable();
-        initializeCargoTable();
+        cargoTableInitializer = new CargoTableInitializer(cargoHib, cargoTableView, cargoColumnId, cargoColumnClient, cargoColumnCargo, cargoColumnPickup, cargoColumnDelivery, cargoColumnDeadline, cargoColumnFinished, cargoColumnDelete);
+        cargoTableInitializer.initialize();
         initializeUsersTable();
-    }
-
-    public void initializeCargoTable() {
-        cargoTableView.setEditable(true);
-
-        cargoColumnId.setCellValueFactory(new PropertyValueFactory<CargoTable, Integer>("id"));
-
-        cargoColumnClient.setCellValueFactory(new PropertyValueFactory<CargoTable, String>("client"));
-        cargoColumnClient.setCellFactory(TextFieldTableCell.forTableColumn());
-        cargoColumnClient.setOnEditCommit(cargoTableStringCellEditEvent -> {
-            updateCargoOnCellCommit(cargoTableStringCellEditEvent.getRowValue().getId(), cargoTableStringCellEditEvent.getNewValue(), CargoEditType.CLIENT);
-            cargoTableStringCellEditEvent.getTableView().getItems().get(cargoTableStringCellEditEvent.getTablePosition().getRow()).setClient(cargoTableStringCellEditEvent.getNewValue());
-        });
-
-        cargoColumnCargo.setCellValueFactory(new PropertyValueFactory<CargoTable, String>("cargo"));
-        cargoColumnCargo.setCellFactory(TextFieldTableCell.forTableColumn());
-        cargoColumnCargo.setOnEditCommit(cargoTableStringCellEditEvent -> {
-            updateCargoOnCellCommit(cargoTableStringCellEditEvent.getRowValue().getId(), cargoTableStringCellEditEvent.getNewValue(), CargoEditType.CARGO);
-            cargoTableStringCellEditEvent.getTableView().getItems().get(cargoTableStringCellEditEvent.getTablePosition().getRow()).setCargo(cargoTableStringCellEditEvent.getNewValue());
-        });
-
-        cargoColumnPickup.setCellValueFactory(new PropertyValueFactory<CargoTable, String>("pickupAddress"));
-        cargoColumnPickup.setCellFactory(TextFieldTableCell.forTableColumn());
-        cargoColumnPickup.setOnEditCommit(cargoTableStringCellEditEvent -> {
-            updateCargoOnCellCommit(cargoTableStringCellEditEvent.getRowValue().getId(), cargoTableStringCellEditEvent.getNewValue(), CargoEditType.PICKUP);
-            cargoTableStringCellEditEvent.getTableView().getItems().get(cargoTableStringCellEditEvent.getTablePosition().getRow()).setPickupAddress(cargoTableStringCellEditEvent.getNewValue());
-        });
-
-        cargoColumnDelivery.setCellValueFactory(new PropertyValueFactory<CargoTable, String>("deliveryAddress"));
-        cargoColumnDelivery.setCellFactory(TextFieldTableCell.forTableColumn());
-        cargoColumnDelivery.setOnEditCommit(cargoTableStringCellEditEvent -> {
-            updateCargoOnCellCommit(cargoTableStringCellEditEvent.getRowValue().getId(), cargoTableStringCellEditEvent.getNewValue(), CargoEditType.DELIVERY);
-            cargoTableStringCellEditEvent.getTableView().getItems().get(cargoTableStringCellEditEvent.getTablePosition().getRow()).setDeliveryAddress(cargoTableStringCellEditEvent.getNewValue());
-        });
-
-        cargoColumnDeadline.setCellValueFactory(cell -> cell.getValue().getDeadline());
-        cargoColumnDeadline.setCellFactory(TextFieldTableCell.<CargoTable, LocalDate>forTableColumn(new StringConverter<LocalDate>() {
-            private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            @Override
-            public String toString(LocalDate localDate) {
-                return formatter.format(localDate);
-            }
-
-            @Override
-            public LocalDate fromString(String s) {
-                return LocalDate.parse(s);
-            }
-        }));
-        cargoColumnDeadline.setOnEditCommit(cargoTableLocalDateCellEditEvent -> {
-            updateCargoOnCellCommit(cargoTableLocalDateCellEditEvent.getRowValue().getId(), cargoTableLocalDateCellEditEvent.getNewValue(), CargoEditType.DEADLINE);
-            cargoTableLocalDateCellEditEvent.getTableView().getItems().get(cargoTableLocalDateCellEditEvent.getTablePosition().getRow()).setDeliveryAddress(String.valueOf(cargoTableLocalDateCellEditEvent.getNewValue()));
-        });
-
-        cargoColumnFinished.setCellValueFactory(new PropertyValueFactory<CargoTable, Boolean>("finished"));
-        cargoColumnFinished.setCellFactory(TextFieldTableCell.<CargoTable, Boolean>forTableColumn(new StringConverter<Boolean>() {
-            @Override
-            public String toString(Boolean aBoolean) {
-                return aBoolean ? "YES" : "NO";
-            }
-
-            @Override
-            public Boolean fromString(String s) {
-                return s.equals("YES");
-            }
-        }));
-        cargoColumnFinished.setOnEditCommit(cargoTableBooleanCellEditEvent -> {
-            updateCargoOnCellCommit(cargoTableBooleanCellEditEvent.getRowValue().getId(), cargoTableBooleanCellEditEvent.getNewValue(), CargoEditType.FINISHED);
-            cargoTableBooleanCellEditEvent.getTableView().getItems().get(cargoTableBooleanCellEditEvent.getTablePosition().getRow()).setFinished(cargoTableBooleanCellEditEvent.getNewValue());
-        });
-
-        cargoColumnDelete.setCellValueFactory(new PropertyValueFactory<CargoTable, String>("deleteBtn"));
-        Callback<TableColumn<CargoTable, String>, TableCell<CargoTable, String>> cellFactory
-                = new Callback<>() {
-
-            @Override
-            public TableCell<CargoTable, String> call(TableColumn<CargoTable, String> cargoTableStringTableColumn) {
-                final TableCell<CargoTable, String> cell = new TableCell<CargoTable, String>() {
-                    final Button btn = new Button("DELETE");
-
-                    @Override
-                    public void updateItem(String item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (empty) {
-                            setGraphic(null);
-                            setText(null);
-                        } else {
-                            btn.setOnAction(event -> {
-                                CargoTable selectedRow = getTableView().getItems().get(getIndex());
-                                cargoTableView.getItems().remove(selectedRow);
-                                cargoHib.deleteCargoById(selectedRow.getId());
-                            });
-                            setGraphic(btn);
-                            setText(null);
-                        }
-                    }
-                };
-                return cell;
-            }
-        };
-        cargoColumnDelete.setCellFactory(cellFactory);
-
     }
 
 
@@ -801,47 +722,13 @@ public class MainPage implements Initializable {
     }
 
     private void onTripSelected(ActionEvent actionEvent) {
-        String value = (String) truckersTripsChoiceBox.getSelectionModel().getSelectedItem();
-        Cargo cargo = null;
-        if (value != null) {
-            String[] parts = value.split(", ");
-            cargo = this.assignedCargos.stream().filter(c -> c.getClient().equals(parts[0]) && c.getAssignedAt().toString().equals(parts[1])).findAny().orElse(null);
-
-            assert cargo != null;
-            clientText.setText(cargo.getClient());
-            assignedAtText.setText(cargo.getAssignedAt().toString());
-            deliveryUntilText.setText(cargo.getDeliverUntil().toString());
-            pickupAddressText.setText(cargo.getStartDestination());
-            deliveryAddressText.setText(cargo.getFinalDestination());
-            cargoDetailsText.setText(cargo.getCargo());
-
-            long daysBetween = DAYS.between(LocalDate.now(), cargo.getDeliverUntil());
-
-            if (daysBetween < 0 && !cargo.isFinished()) tripStatusText.setText("Deadline is overdue, cargo is not delivered");
-            else if (cargo.isFinished()) {
-                tripStatusText.setText("Delivered");
-                tripStatusText.setFill(Color.GREEN);
-            }
-            else {
-                tripStatusText.setText(daysBetween + " days remaining until cargo delivery deadline");
-                tripStatusText.setFill(Color.RED);
-            }
-        }
+        tripHandler.handleTripSelection(actionEvent, truckersTripsChoiceBox);
     }
 
     private void onTruckSelected(Event event) {
         List<Truck> trucks = truckHib.getAllTrucks();
-        String value = trucksChoiceBox.getSelectionModel().getSelectedItem();
-        if (value != null) {
-            String[] parts = value.split(" ");
-            this.truck = trucks.stream().filter(t -> t.getBrand().equals(parts[0]) && t.getModel().equals(parts[1])).findAny().orElse(null);
-            assert truck != null;
-            brandText.setText(truck.getBrand());
-            modelText.setText(truck.getModel());
-            hpText.setText(String.valueOf(truck.getHp()));
-            engineText.setText(String.valueOf(truck.getEngine()));
-            releaseText.setText(String.valueOf(truck.getReleaseYear()));
-        }
+        tripHandler.handleTruckSelection(event, trucksChoiceBox, trucks);
+        this.truck = tripHandler.getSelectedTruck();
     }
 
     public void deleteUser(UsersTable usersTable) {

@@ -40,7 +40,6 @@ public class AddTruckModal implements Initializable {
 
     public void initData(TruckHib truckHib) { this.truckHib = truckHib; }
 
-
     public void onTruckAdd(ActionEvent actionEvent) {
         if (addBrandField.getText().length() >= 3 && !addModelField.getText().isEmpty() && !addHpfield.getText().isEmpty() && !addEngineField.getText().isEmpty() && addReleaseField.getText().length() == 4) {
             this.truck = new Truck(addBrandField.getText(), addModelField.getText(), Integer.parseInt(addHpfield.getText()), Double.parseDouble(addEngineField.getText()), Integer.parseInt(addReleaseField.getText()));

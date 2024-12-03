@@ -26,7 +26,7 @@ public class CreateForumModal {
     @FXML
     public Label labelValidate;
 
-    private Consumer<Forum> forumConsumer;
+    Consumer<Forum> forumConsumer;
     private User user;
     private ForumHib forumHib = null;
 
